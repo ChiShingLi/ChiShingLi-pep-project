@@ -36,4 +36,9 @@ public class SocialMediaService {
     public Message getMessageById(String id){
         return socialMediaDAO.getMessageById(id);
     }
+
+    public Message deleteMessageById(String id){
+        return socialMediaDAO.deleteMessageById(id);
+    }
+    
 }

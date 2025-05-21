@@ -170,8 +170,8 @@ public class SocialMediaDAO {
         return messageList;
     }
 
-    //get a message by message_id
-    //if failed, still return status code 200
+    // get a message by message_id
+    // if failed, still return status code 200
     public Message getMessageById(String id) {
         Message message = new Message();
         try (Connection connection = ConnectionUtil.getConnection()) {
@@ -190,6 +190,30 @@ public class SocialMediaDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    // check if message exists in the db
+    // if it is, delete it
+    // return back the old message that been deleted
+    public Message deleteMessageById(String id) {
+        Message oldMessage = getMessageById(id);
+        if (oldMessage != null) {
+            try (Connection connection = ConnectionUtil.getConnection()) {
+                String sql = "DELETE FROM message WHERE message_id = ?;";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, Integer.valueOf(id));
+                int rowAffected = preparedStatement.executeUpdate();
+
+                if (rowAffected > 0) {
+                    return oldMessage;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return null;
