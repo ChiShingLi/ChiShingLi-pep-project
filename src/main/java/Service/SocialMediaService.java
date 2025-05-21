@@ -44,4 +44,8 @@ public class SocialMediaService {
     public Message updateMessageById(String id, Message messageBody){
         return socialMediaDAO.updateMessageById(id, messageBody);
     }
+
+    public List<Message> getAllMessagesByUserId(String id){
+        return socialMediaDAO.getAllMessagesByUserId(id);
+    }
 }
