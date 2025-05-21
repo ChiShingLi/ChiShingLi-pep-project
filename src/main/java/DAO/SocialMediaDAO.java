@@ -151,8 +151,8 @@ public class SocialMediaDAO {
         return null;
     }
 
-    //return all messages from the db
-    //if failed, still return empty list
+    // return all messages from the db
+    // if failed, still return empty list
     public List<Message> getAllMessage() {
         List<Message> messageList = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection()) {
@@ -168,5 +168,30 @@ public class SocialMediaDAO {
         }
 
         return messageList;
+    }
+
+    //get a message by message_id
+    //if failed, still return status code 200
+    public Message getMessageById(String id) {
+        Message message = new Message();
+        try (Connection connection = ConnectionUtil.getConnection()) {
+            String sql = "SELECT * FROM message WHERE message_id = ?;";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, Integer.valueOf(id));
+
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                message.setMessage_id(rs.getInt(1));
+                message.setPosted_by(rs.getInt(2));
+                message.setMessage_text(rs.getString(3));
+                message.setTime_posted_epoch(rs.getLong(4));
+                return message;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

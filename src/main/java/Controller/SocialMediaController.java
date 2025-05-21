@@ -1,7 +1,6 @@
 package Controller;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import Model.Account;
 import Model.Message;
@@ -37,6 +36,7 @@ public class SocialMediaController {
         app.post("/login", this::loginUser);
         app.post("/messages", this::postMessage);
         app.get("/messages", this::getAllMessage);
+        app.get("/messages/{message_id}", this::getMessageById);
         return app;
     }
 
@@ -78,5 +78,15 @@ public class SocialMediaController {
     private void getAllMessage(Context ctx) {
         List<Message> messageList = socialMediaService.getAllMessage();
         ctx.json(messageList).status(200);
+    }
+
+    private void getMessageById(Context ctx){
+        Message message = socialMediaService.getMessageById(ctx.pathParam("message_id"));
+        //message_id
+        if(message == null){
+            ctx.result("").status(200);
+        }else{
+            ctx.json(message).status(200);
+        }
     }
 }
