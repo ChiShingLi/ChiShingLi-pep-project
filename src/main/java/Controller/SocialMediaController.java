@@ -1,5 +1,8 @@
 package Controller;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import Model.Account;
 import Model.Message;
 import Service.SocialMediaService;
@@ -33,6 +36,7 @@ public class SocialMediaController {
         app.post("/register", this::registerUser);
         app.post("/login", this::loginUser);
         app.post("/messages", this::postMessage);
+        app.get("/messages", this::getAllMessage);
         return app;
     }
 
@@ -69,5 +73,10 @@ public class SocialMediaController {
         } else {
             ctx.json(newMessage).status(200);
         }
+    }
+
+    private void getAllMessage(Context ctx) {
+        List<Message> messageList = socialMediaService.getAllMessage();
+        ctx.json(messageList).status(200);
     }
 }

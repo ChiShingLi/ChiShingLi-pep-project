@@ -4,6 +4,9 @@ import java.sql.*;
 
 import Model.Account;
 import Model.Message;
+
+import java.util.ArrayList;
+import java.util.List;
 import Util.ConnectionUtil;
 
 public class SocialMediaDAO {
@@ -132,7 +135,7 @@ public class SocialMediaDAO {
                     if (rowAffected > 0) {
                         ResultSet rs = preparedStatement.getGeneratedKeys();
 
-                        //get the primary back from the inserted statement
+                        // get the primary back from the inserted statement
                         if (rs.next()) {
                             int generatedId = rs.getInt(1);
                             return new Message(generatedId, message.getPosted_by(), message.getMessage_text(),
@@ -146,5 +149,24 @@ public class SocialMediaDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    //return all messages from the db
+    //if failed, still return empty list
+    public List<Message> getAllMessage() {
+        List<Message> messageList = new ArrayList<>();
+        try (Connection connection = ConnectionUtil.getConnection()) {
+            String sql = "SELECT * FROM message;";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                messageList.add(new Message(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getLong(4)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return messageList;
     }
 }
