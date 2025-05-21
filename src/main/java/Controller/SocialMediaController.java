@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.Account;
+import Model.Message;
 import Service.SocialMediaService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -31,6 +32,7 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.post("/register", this::registerUser);
         app.post("/login", this::loginUser);
+        app.post("/messages", this::postMessage);
         return app;
     }
 
@@ -50,11 +52,22 @@ public class SocialMediaController {
         Account existingAccount = socialMediaService.loginUser(account);
 
         if (existingAccount == null) {
-            //user not found
+            // user not found
             ctx.status(401);
         } else {
             // user found
             ctx.json(existingAccount).status(200);
+        }
+    }
+
+    private void postMessage(Context ctx) {
+        Message message = ctx.bodyAsClass(Message.class);
+        Message newMessage = socialMediaService.postMessage(message);
+
+        if (newMessage == null) {
+            ctx.status(400);
+        } else {
+            ctx.json(newMessage).status(200);
         }
     }
 }

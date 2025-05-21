@@ -2,6 +2,7 @@ package Service;
 
 import DAO.SocialMediaDAO;
 import Model.Account;
+import Model.Message;
 
 public class SocialMediaService {
     SocialMediaDAO socialMediaDAO;
@@ -20,5 +21,9 @@ public class SocialMediaService {
 
     public Account loginUser(Account account){
         return socialMediaDAO.loginUser(account);
+    }
+
+    public Message postMessage(Message message){
+        return socialMediaDAO.postMesesge(message);
     }
 }
