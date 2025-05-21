@@ -163,7 +163,7 @@ public class SocialMediaDAO {
             while (rs.next()) {
                 messageList.add(new Message(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getLong(4)));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -188,7 +188,7 @@ public class SocialMediaDAO {
                 return message;
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -211,7 +211,41 @@ public class SocialMediaDAO {
                     return oldMessage;
                 }
 
-            } catch (Exception e) {
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+    // if message is found, updated message length lesser than 256 and updated
+    // message body is not empty
+    public Message updateMessageById(String id, Message messageBody) {
+        Message oldMessage = getMessageById(id);
+        if (oldMessage != null && messageBody.getMessage_text().length() <= 255
+                && !messageBody.getMessage_text().isEmpty()) {
+            // if old message exists
+            try (Connection connection = ConnectionUtil.getConnection()) {
+                String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+                preparedStatement.setString(1, messageBody.getMessage_text());
+                preparedStatement.setInt(2, Integer.valueOf(id));
+
+                int rowAffected = preparedStatement.executeUpdate();
+
+                if (rowAffected > 0) {
+                    ResultSet rs = preparedStatement.getGeneratedKeys();
+                    if (rs.next()) {
+                        int generatedId = rs.getInt(1);
+                        // query, updated message
+                        Message updatedMessage = getMessageById(String.valueOf(generatedId));
+
+                        return updatedMessage;
+                    }
+                }
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }

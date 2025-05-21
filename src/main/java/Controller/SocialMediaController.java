@@ -38,6 +38,7 @@ public class SocialMediaController {
         app.get("/messages", this::getAllMessage);
         app.get("/messages/{message_id}", this::getMessageById);
         app.delete("/messages/{message_id}", this::deleteMessageById);
+        app.patch("/messages/{message_id}", this::updateMessageById);
         return app;
     }
 
@@ -81,22 +82,33 @@ public class SocialMediaController {
         ctx.json(messageList).status(200);
     }
 
-    private void getMessageById(Context ctx){
+    private void getMessageById(Context ctx) {
         Message message = socialMediaService.getMessageById(ctx.pathParam("message_id"));
-        //message_id
-        if(message == null){
+        // message_id
+        if (message == null) {
             ctx.result("").status(200);
-        }else{
+        } else {
             ctx.json(message).status(200);
         }
     }
 
-    private void deleteMessageById(Context ctx){
+    private void deleteMessageById(Context ctx) {
+
         Message message = socialMediaService.deleteMessageById(ctx.pathParam("message_id"));
 
-        if(message == null){
+        if (message == null) {
             ctx.result("").status(200);
-        }else{
+        } else {
+            ctx.json(message).status(200);
+        }
+    }
+
+    private void updateMessageById(Context ctx) {
+        Message updatedMessage = ctx.bodyAsClass(Message.class);
+        Message message = socialMediaService.updateMessageById(ctx.pathParam("message_id"), updatedMessage);
+        if (message == null) {
+            ctx.status(400);
+        } else {
             ctx.json(message).status(200);
         }
     }
